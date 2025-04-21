@@ -12,6 +12,11 @@ echo "This script will run each exercise and stop when it gets to a broken one."
 echo "Once you've fixed that exercise, run this script again to continue."
 echo ""
 
+if test -f "0_0.tigerbeetle"; then
+    echo "TigerBeetle data file already exists. Removing exercise."
+    rm 0_0.tigerbeetle
+fi
+
 # Run each exercise
 for file in $(ls exercises/[0-9][0-9][0-9]*.sh | sort -n); do
     echo "${bold}Running exercise: ./$file${normal}"
