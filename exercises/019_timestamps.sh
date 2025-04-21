@@ -24,7 +24,7 @@ time_now=$(date +%s000000000)
 
 # Let's create a transfer and try attaching the timestamp:
 transfer_id=19000
-tb "create_transfers id=$transfer_id debit_account_id=1900 credit_account_id=1901 amount=100 ledger=190 code=10 timestamp=${time_now};"
+tb "create_transfers id=$transfer_id debit_account_id=1900 credit_account_id=1901 amount=100 ledger=190 code=10 user_data_64=${time_now};"
 
 # Now let's check if it worked...
 transfer_has_our_timestamp=$(tb "lookup_transfers id=$transfer_id;" | grep "\"$time_now\"")
