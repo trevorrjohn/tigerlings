@@ -10,7 +10,7 @@ source ./tools/tb_function.sh
 # Let's go crazy here and create 8190 accounts in a single request!
 # Why 8190? That's the maximum number we can send in a request.
 create_account_batch="create_accounts "
-for ((i=0; i<8190; i++)); do
+for ((i=0; i<8189; i++)); do
     create_account_batch+="id=$((100000 + i)) code=10 ledger=100, "
 done
 
@@ -19,11 +19,13 @@ tb "${create_account_batch%, };"
 
 # Now let's do the same for transfers!
 
+count=0
 create_transfer_batch="create_transfers "
-for ((i=0; i<8191; i++)); do
-    create_transfer_batch+="id=$((1000 + i)) \
+for ((i=0; i<8189; i++)); do
+    count=$((count + 1))
+    create_transfer_batch+="id=$((100000 + i)) \
         debit_account_id=$((100000 + i)) \
-        credit_account_id=$((100000 + (1 + i) % 8190)) \
+        credit_account_id=$((100000 + (1 + i) % 8189)) \
         amount=1 \
         code=10 \
         ledger=100, "
