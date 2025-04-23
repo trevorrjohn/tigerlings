@@ -19,11 +19,12 @@ tb "create_accounts id=3300 code=10 ledger=$USD_LEDGER,
 tb "create_transfers id=33000 debit_account_id=3300 credit_account_id=3301 amount=10000 ledger=$USD_LEDGER code=10,
                      id=33001 debit_account_id=3302 credit_account_id=3303 amount=100   ledger=$RATE_LIMITING_LEDGER code=10;"
 
+                     TIMEOUT=3
 for ((i=1; i<=11; i++)); do
     id=$((33002 + (i * 2)))
     # What flags should these two transfers have? (Hint: they aren't the same.)
-    tb "create_transfers id=${id}       debit_account_id=3301 credit_account_id=3300 amount=10 ledger=$USD_LEDGER code=10 flags=???,
-                                  id=$((id + 1)) debit_account_id=3303 credit_account_id=3302 amount=10 timeout=60 ledger=$RATE_LIMITING_LEDGER code=10 flags=???;"
+    tb "create_transfers id=${id}       debit_account_id=3301 credit_account_id=3300 amount=10 ledger=$USD_LEDGER code=10 flags=linked,
+                                  id=$((id + 1)) debit_account_id=3303 credit_account_id=3302 amount=10 timeout=$TIMEOUT ledger=$RATE_LIMITING_LEDGER code=10 flags=pending;"
 done
 # The last two of these transfers will fail because the user has exceeded the rate limit.
 
@@ -31,6 +32,6 @@ tb "lookup_accounts id=3301;"
 
 # You can uncomment these lines to sleep for 60 seconds before creating another transfer
 # (that will work because the user will be within the rate limit).
-# sleep 60
-# tb "create_transfers id=33030 debit_account_id=3301 credit_account_id=3300 amount=10 ledger=$USD_LEDGER code=10 flags=linked,
-#                      id=33031 debit_account_id=3303 credit_account_id=3302 amount=10 timeout=60 ledger=$RATE_LIMITING_LEDGER code=10 flags=pending;"
+sleep $TIMEOUT
+tb "create_transfers id=33030 debit_account_id=3301 credit_account_id=3300 amount=10 ledger=$USD_LEDGER code=10 flags=linked,
+                     id=33031 debit_account_id=3303 credit_account_id=3302 amount=10 timeout=$TIMEOUT ledger=$RATE_LIMITING_LEDGER code=10 flags=pending;"
